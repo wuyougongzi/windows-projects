@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "explorehook", "explorehook\explorehook.vcxproj", "{CD0E3E8A-5CD1-46AF-8E59-1143F7235B37}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "explorehookdll", "explorehookdll\explorehookdll.vcxproj", "{3FCD38AC-2059-4B75-AFE6-7F34BF942E27}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD0E3E8A-5CD1-46AF-8E59-1143F7235B37}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CD0E3E8A-5CD1-46AF-8E59-1143F7235B37}.Debug|Win32.Build.0 = Debug|Win32
+		{CD0E3E8A-5CD1-46AF-8E59-1143F7235B37}.Release|Win32.ActiveCfg = Release|Win32
+		{CD0E3E8A-5CD1-46AF-8E59-1143F7235B37}.Release|Win32.Build.0 = Release|Win32
+		{3FCD38AC-2059-4B75-AFE6-7F34BF942E27}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3FCD38AC-2059-4B75-AFE6-7F34BF942E27}.Debug|Win32.Build.0 = Debug|Win32
+		{3FCD38AC-2059-4B75-AFE6-7F34BF942E27}.Release|Win32.ActiveCfg = Release|Win32
+		{3FCD38AC-2059-4B75-AFE6-7F34BF942E27}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
