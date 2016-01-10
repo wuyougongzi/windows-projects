@@ -1,0 +1,11 @@
+LIBRARY "SERVER2"
+
+DESCRIPTION ""SERVER Windows Dynamic Link Library"
+
+EXPORTS
+	; Explicit exports can go here
+	DllGetClassObject	PRIVATE
+	DllCanUnloadNow		PRIVATE
+	DllRegisterServer	PRIVATE
+	DllUnregisterServer	PRIVATE
+
