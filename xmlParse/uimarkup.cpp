@@ -1,5 +1,7 @@
 #include "uimarkup.h"
 #include <tchar.h>
+#include <stdio.h>
+#include <assert.h>
 
 #define lengthof(x) (sizeof(x)/sizeof(*x))
 
@@ -44,9 +46,9 @@ XmlMarkupNode XmlMarkupNode::GetChild()
     return XmlMarkupNode(m_pOwner, iPos);
 }
 
-void XmlMarkupNode::AddChild(void*)
+void XmlMarkupNode::AddChild(XmlMarkupNode childNode)
 {
-
+    m_childNodeVec.push_back(childNode);
 }
 
 XmlMarkupNode XmlMarkupNode::GetChild(LPCTSTR pstrName)
@@ -100,6 +102,11 @@ LPCTSTR XmlMarkupNode::GetName() const
 void XmlMarkupNode::SetName(char* name)
 {
 	//todo:node name
+    if(name == NULL)
+        return;
+    
+    string nameStr(name);
+    m_nameStr = nameStr;
 }
 
 LPCTSTR XmlMarkupNode::GetValue() const
@@ -112,8 +119,11 @@ LPCTSTR XmlMarkupNode::GetValue() const
 
 void XmlMarkupNode::SetValue(char* value)
 {
-	//todo:node value
+    if(value == NULL)
+        return;
 
+    std::string valueStr(value);
+    m_valueStr = valueStr;
 }
 
 LPCTSTR XmlMarkupNode::GetAttributeName(int iIndex)
@@ -219,9 +229,35 @@ bool XmlMarkupNode::HasAttribute(LPCTSTR pstrName)
     return false;
 }
 
-void XmlMarkupNode::AddAttribute(void*)
+void XmlMarkupNode::AddAttribute(XmlAttribute xmlAttr)
 {
+    m_attrVec.push_back(xmlAttr);
+}
 
+string XmlMarkupNode::CreateXmlNodeStr()
+{
+    assert(!m_nameStr.empty());
+    string nodeStr;
+    nodeStr = nodeStr.append("<");
+    nodeStr += m_nameStr;
+    
+    std::string whileSpaceStr(" ");
+    for(size_t i = 0; i < m_attrVec.size(); ++i)
+    {
+        nodeStr += whileSpaceStr;
+        nodeStr += m_attrVec[i].CreateXmlAttribute();
+        nodeStr += whileSpaceStr;
+    }
+    nodeStr = nodeStr.append(">");
+
+    for(size_t i = 0; i < m_childNodeVec.size(); ++i)
+        nodeStr += m_childNodeVec[i].CreateXmlNodeStr();
+
+    nodeStr = nodeStr.append("</");
+    nodeStr += m_nameStr;
+    nodeStr = nodeStr.append(">");
+
+    return nodeStr;
 }
 
 void XmlMarkupNode::_MapAttributes()
@@ -245,16 +281,30 @@ void XmlMarkupNode::_MapAttributes()
     }
 }
 
-void XmlAttribute::SetName(char*)
+void XmlAttribute::SetName(char* name)
 {
+    if(name == NULL)
+        return;
 
+    std::string nameStr(name);
+    m_nameStr = nameStr;
 }
 
-void XmlAttribute::SetValue(char*)
+void XmlAttribute::SetValue(char* value)
 {
+    if(value == NULL)
+        return;
 
+    std::string valueStr(value);
+    m_valueStr = valueStr;
 }
 
+std::string XmlAttribute::CreateXmlAttribute()
+{
+    assert(!m_nameStr.empty());
+    
+    return m_nameStr + "=" + m_valueStr;
+}
 
 XmlMarkup::XmlMarkup(LPCTSTR pstrXML)
 {
@@ -479,7 +529,12 @@ XmlMarkupNode XmlMarkup::GetRoot()
 
 void XmlMarkup::SetRootNode(XmlMarkupNode rootNode)
 {
-	//todo:
+    m_pRootNode = rootNode;
+}
+
+std::string XmlMarkup::getXmlStr()
+{
+    return m_pRootNode.CreateXmlNodeStr();
 }
 
 bool XmlMarkup::_Parse()

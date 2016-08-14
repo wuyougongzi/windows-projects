@@ -47,28 +47,35 @@ void writeXmlFunc(XmlMarkup &markUp)
 		attribute.SetName(attributeName);
 		char *attributeValue = "100";
 		attribute.SetValue(attributeValue);
-		rootNode.AddAttribute((void *)&attribute);
+		rootNode.AddAttribute(attribute);
+
 	}
 	markUp.SetRootNode(rootNode);
 
-	XmlMarkupNode toNode;
-	{
-		//todo:  设置node的各种属性
-		//放在里面做可能更容易
-	}
-	rootNode.AddChild((void*)&toNode);
+    XmlMarkupNode toNode;
+    {
+        toNode.SetName("today");
+        toNode.SetValue("Sunday");
+    }
+    rootNode.AddChild(toNode);
 	
 	XmlMarkupNode remarkNode;
 	{
 		//todo: 设置remarkNode各种属性
-	}
-	toNode.AddChild((void*)&remarkNode);
+        remarkNode.SetName("weather");
+        remarkNode.SetValue("good day");
 
-	XmlMarkupNode fromNode;
-	{
-		//todo: 设置node的各种属性
+        XmlAttribute xmlAttr;
+        xmlAttr.SetName("out");
+        xmlAttr.SetValue("yes");
 	}
-	rootNode.AddChild((void*)&toNode);
+	toNode.AddChild(remarkNode);
+
+// 	XmlMarkupNode fromNode;
+// 	{
+// 		//todo: 设置node的各种属性
+// 	}
+// 	rootNode.AddChild((void*)&toNode);
 }
 
 int main()
@@ -77,6 +84,8 @@ int main()
 	readXmlFunc(markUp);
 
 	XmlMarkup writeMarkUp;
-	writeXmlFunc(markUp);
+	writeXmlFunc(writeMarkUp);
+
+    std::string ttStr = writeMarkUp.getXmlStr();
 	system("puase");
 }

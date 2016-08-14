@@ -2,6 +2,10 @@
 #define __UIMARKUP_H__
 
 #include <Windows.h>
+#include <string>
+#include <vector>
+
+using namespace std;
 
 enum
 {
@@ -12,7 +16,78 @@ enum
 
 class XmlMarkup;
 class XmlMarkupNode;
+class XmlAttribute;
 
+
+class XmlAttribute
+{
+public:
+    void SetName(char* name);
+    void SetValue(char* value);
+    std::string CreateXmlAttribute();
+private:
+    std::string m_nameStr;
+    std::string m_valueStr;
+};
+
+class XmlMarkupNode
+{
+    friend class XmlMarkup;
+public:
+    XmlMarkupNode();
+    XmlMarkupNode(XmlMarkup* pOwner, int iPos);
+
+public:
+    bool IsValid() const;
+
+    XmlMarkupNode GetParent();
+    XmlMarkupNode GetSibling();
+    XmlMarkupNode GetChild();
+    XmlMarkupNode GetChild(LPCTSTR pstrName);
+    void AddChild(XmlMarkupNode childNode);
+
+    bool HasSiblings() const;
+    bool HasChildren() const;
+    LPCTSTR GetName() const;
+    LPCTSTR GetValue() const;
+    void SetName(char* name);
+    void SetValue(char* value);
+
+    bool HasAttributes();
+    bool HasAttribute(LPCTSTR pstrName);
+    int GetAttributeCount();
+    LPCTSTR GetAttributeName(int iIndex);
+    LPCTSTR GetAttributeValue(int iIndex);
+    LPCTSTR GetAttributeValue(LPCTSTR pstrName);
+    bool GetAttributeValue(int iIndex, LPTSTR pstrValue, SIZE_T cchMax);
+    bool GetAttributeValue(LPCTSTR pstrName, LPTSTR pstrValue, SIZE_T cchMax);
+
+    //for write xml
+    void InitXmlMarkupNode(unsigned long strSize);
+    void AddAttribute(XmlAttribute xmlAttr);
+    std::string CreateXmlNodeStr();
+
+private:
+    void _MapAttributes();
+
+    enum { MAX_XML_ATTRIBUTES = 64 };
+
+    typedef struct
+    {
+        ULONG iName;
+        ULONG iValue;
+    } XMLATTRIBUTE;
+
+    int m_iPos;
+    int m_nAttributes;
+    XMLATTRIBUTE m_aAttributes[MAX_XML_ATTRIBUTES];
+    XmlMarkup* m_pOwner;
+
+    std::string m_nameStr;
+    std::string m_valueStr;
+    std::vector<XmlAttribute> m_attrVec;
+    std::vector<XmlMarkupNode> m_childNodeVec;
+};
 
 class XmlMarkup
 {
@@ -34,7 +109,11 @@ public:
     void GetLastErrorLocation(LPTSTR pstrSource, SIZE_T cchMax) const;
 
     XmlMarkupNode GetRoot();
+
+    //for write xml
 	void SetRootNode(XmlMarkupNode rootNode);
+    
+    std::string getXmlStr();
 
 private:
 	//保存的是element在字符串中的位置，通过字符串指针首地址加上位置即可得到对应的字符串
@@ -55,6 +134,8 @@ private:
     TCHAR m_szErrorXML[50];
     bool m_bPreserveWhitespace;
 
+    XmlMarkupNode m_pRootNode;
+
 private:
     bool _Parse();
     bool _Parse(LPTSTR& pstrText, ULONG iParent);
@@ -69,64 +150,5 @@ private:
     bool _Failed(LPCTSTR pstrError, LPCTSTR pstrLocation = NULL);
 };
 
-
-class XmlMarkupNode
-{
-    friend class XmlMarkup;
-public:
-    XmlMarkupNode();
-    XmlMarkupNode(XmlMarkup* pOwner, int iPos);
-
-public:
-    bool IsValid() const;
-
-    XmlMarkupNode GetParent();
-    XmlMarkupNode GetSibling();
-    XmlMarkupNode GetChild();
-    XmlMarkupNode GetChild(LPCTSTR pstrName);
-	void AddChild(void*);
-
-    bool HasSiblings() const;
-    bool HasChildren() const;
-    LPCTSTR GetName() const;
-    LPCTSTR GetValue() const;
-	void SetName(char* name);
-	void SetValue(char* value);
-
-    bool HasAttributes();
-    bool HasAttribute(LPCTSTR pstrName);
-    int GetAttributeCount();
-    LPCTSTR GetAttributeName(int iIndex);
-    LPCTSTR GetAttributeValue(int iIndex);
-    LPCTSTR GetAttributeValue(LPCTSTR pstrName);
-    bool GetAttributeValue(int iIndex, LPTSTR pstrValue, SIZE_T cchMax);
-    bool GetAttributeValue(LPCTSTR pstrName, LPTSTR pstrValue, SIZE_T cchMax);
-
-	void AddAttribute(void*);
-
-private:
-    void _MapAttributes();
-
-    enum { MAX_XML_ATTRIBUTES = 64 };
-
-    typedef struct
-    {
-        ULONG iName;
-        ULONG iValue;
-    } XMLATTRIBUTE;
-
-    int m_iPos;
-    int m_nAttributes;
-    XMLATTRIBUTE m_aAttributes[MAX_XML_ATTRIBUTES];
-    XmlMarkup* m_pOwner;
-};
-
-
-class XmlAttribute
-{
-public:
-	void SetName(char*);
-	void SetValue(char*);
-};
 
 #endif // __UIMARKUP_H__
