@@ -16,7 +16,6 @@ void readXmlFunc(XmlMarkup markUp)
 							  </note>";
 
 	markUp.Load(xmlContentTest);
-	//	markUp.LoadFromFile(filePath);
 
 	XmlMarkupNode rootNode = markUp.GetRoot();
 	wstring strName = rootNode.GetName();
@@ -33,10 +32,8 @@ void readXmlFunc(XmlMarkup markUp)
 
 void writeXmlFunc(XmlMarkup &markUp)
 {
-	//todo： 大概会是下面的使用形式，然后根据下面的设计创建接口
 	XmlMarkupNode rootNode;
 	{
-		//todo:
 		char*rootName = "note";
 		rootNode.SetName(rootName);
 		char *rootValue = "value";
@@ -48,34 +45,28 @@ void writeXmlFunc(XmlMarkup &markUp)
 		char *attributeValue = "100";
 		attribute.SetValue(attributeValue);
 		rootNode.AddAttribute(attribute);
-
 	}
-	markUp.SetRootNode(rootNode);
-
+	
     XmlMarkupNode toNode;
     {
         toNode.SetName("today");
         toNode.SetValue("Sunday");
     }
-    rootNode.AddChild(toNode);
 	
 	XmlMarkupNode remarkNode;
 	{
-		//todo: 设置remarkNode各种属性
         remarkNode.SetName("weather");
-        remarkNode.SetValue("good day");
+        remarkNode.SetValue("goo&&d day");
 
         XmlAttribute xmlAttr;
         xmlAttr.SetName("out");
-        xmlAttr.SetValue("yes");
+        xmlAttr.SetValue("y\"es");
+        remarkNode.AddAttribute(xmlAttr);
 	}
-	toNode.AddChild(remarkNode);
 
-// 	XmlMarkupNode fromNode;
-// 	{
-// 		//todo: 设置node的各种属性
-// 	}
-// 	rootNode.AddChild((void*)&toNode);
+    toNode.AddChild(remarkNode);
+    rootNode.AddChild(toNode);
+    markUp.SetRootNode(rootNode);
 }
 
 int main()

@@ -5,6 +5,30 @@
 
 #define lengthof(x) (sizeof(x)/sizeof(*x))
 
+//process transfer meaning word
+void replaceTransferWord(string &targetStr, string bReplacedStr, string replacedStr)
+{
+    string::size_type startPos = 0;
+    while(true)
+    {
+        string::size_type index = targetStr.find(bReplacedStr, startPos);
+        if(index == string::npos)
+            break;
+        
+        targetStr.replace(index, bReplacedStr.length(), replacedStr);
+        startPos = index + replacedStr.length();
+    }
+}
+
+void processMetaChar(string &wordStr)
+{
+    replaceTransferWord(wordStr, "&","&amp;");
+    replaceTransferWord(wordStr, "<", "&lt;");
+    replaceTransferWord(wordStr, ">", "&gt;");
+    replaceTransferWord(wordStr, "\"", "&quot;");
+    replaceTransferWord(wordStr, "'", "&apos;");
+}
+
 XmlMarkupNode::XmlMarkupNode() : m_pOwner(NULL)
 {
 }
@@ -101,11 +125,11 @@ LPCTSTR XmlMarkupNode::GetName() const
 
 void XmlMarkupNode::SetName(char* name)
 {
-	//todo:node name
     if(name == NULL)
         return;
     
     string nameStr(name);
+    processMetaChar(nameStr);
     m_nameStr = nameStr;
 }
 
@@ -123,6 +147,7 @@ void XmlMarkupNode::SetValue(char* value)
         return;
 
     std::string valueStr(value);
+    processMetaChar(valueStr);
     m_valueStr = valueStr;
 }
 
@@ -241,6 +266,7 @@ string XmlMarkupNode::CreateXmlNodeStr()
     nodeStr = nodeStr.append("<");
     nodeStr += m_nameStr;
     
+    //attribute
     std::string whileSpaceStr(" ");
     for(size_t i = 0; i < m_attrVec.size(); ++i)
     {
@@ -249,7 +275,10 @@ string XmlMarkupNode::CreateXmlNodeStr()
         nodeStr += whileSpaceStr;
     }
     nodeStr = nodeStr.append(">");
-
+    //value
+    nodeStr += m_valueStr;
+    
+    //childNode
     for(size_t i = 0; i < m_childNodeVec.size(); ++i)
         nodeStr += m_childNodeVec[i].CreateXmlNodeStr();
 
@@ -287,6 +316,7 @@ void XmlAttribute::SetName(char* name)
         return;
 
     std::string nameStr(name);
+    processMetaChar(nameStr);
     m_nameStr = nameStr;
 }
 
@@ -296,6 +326,7 @@ void XmlAttribute::SetValue(char* value)
         return;
 
     std::string valueStr(value);
+    processMetaChar(valueStr);
     m_valueStr = valueStr;
 }
 
@@ -303,7 +334,8 @@ std::string XmlAttribute::CreateXmlAttribute()
 {
     assert(!m_nameStr.empty());
     
-    return m_nameStr + "=" + m_valueStr;
+    string tmp = m_nameStr + "=" + "\"";/*　+　m_valueStr　+　"\""*/;
+    return tmp + m_valueStr + "\"";
 }
 
 XmlMarkup::XmlMarkup(LPCTSTR pstrXML)
